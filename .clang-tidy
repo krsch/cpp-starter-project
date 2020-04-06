@@ -1,0 +1,10 @@
+---
+Checks: '*,
+    ,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*,-cert-*,
+    ,-modernize-use-trailing-return-type,
+    ,-hicpp-braces-around-statements,
+    ,-readability-braces-around-statements,
+    ,-misc-non-private-member-variables-in-classes'
+HeaderFilterRegex: ''
+FormatStyle:     file
+
