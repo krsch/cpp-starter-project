@@ -1,0 +1,10 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+dist: bionic
+
+script:
+  - cmake -B build -G Ninja
+  - cmake --build build
+  - ninja -C build test
