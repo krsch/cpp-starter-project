@@ -3,8 +3,14 @@ compiler:
   - clang
   - gcc
 dist: bionic
+os:
+  - linux
+  - windows
+  - macos
 
 script:
-  - cmake -B build -G Ninja
-  - cmake --build build
-  - ninja -C build test
+  - mkdir -p build
+  - cd build
+  - cmake -G Ninja ..
+  - cmake --build .
+  - ninja test
