@@ -5,6 +5,7 @@ install:
 - cmd: git submodule update --init --recursive
 before_build:
 - cmd: >-
+    md build
     cd build
     cmake -G "Visual Studio 15" ..
 build:
