@@ -11,7 +11,7 @@ install:
 before_build:
 - cmd: >-
     cmake -B build
-build_script: >-
-  cmake --build build
-  cd build
-  ctest
+build_script:
+  - cmake --build build
+  - cd build
+  - ctest
