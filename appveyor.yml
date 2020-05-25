@@ -8,10 +8,8 @@ image:
   - macos
 install:
 - cmd: git submodule update --init --recursive
-before_build:
-- cmd: >-
-    cmake -B build
 build_script:
+  - cmake -B build
   - cmake --build build
   - cd build
   - ctest
