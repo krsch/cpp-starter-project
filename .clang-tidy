@@ -1,6 +1,7 @@
 ---
-Checks: '*,
-    ,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*,-cert-*,
+Checks: 'bugprone-*,clang-analyzer-cplusplus.InnerPointer,cppcoreguidelines-*
+    ,readability-*,clang-analyzer-core-*,clang-analyzer-cplusplus-*
+    ,clang-analyzer-deadcode-*,clang-analyzer-nullability-*
     ,-modernize-use-trailing-return-type,
     ,-hicpp-braces-around-statements,
     ,-readability-braces-around-statements,
