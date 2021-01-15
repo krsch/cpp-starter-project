@@ -1,5 +1,6 @@
 .vscode
 .clangd
+.cache
 /build
 /compile_commands.json
 /.vs
