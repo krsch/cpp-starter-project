@@ -1,3 +1,3 @@
 #include "lib.hpp"
 
-int not_random() { return 3; }
+auto not_random() -> int { return 3; } // Definition

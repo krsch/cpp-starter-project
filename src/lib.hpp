@@ -1,3 +1,3 @@
 #pragma once
 
-extern int not_random();
+extern auto not_random() -> int; // Declaration
