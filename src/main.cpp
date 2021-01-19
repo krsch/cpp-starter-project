@@ -39,6 +39,7 @@ auto main() -> int {                   // def main() -> int:
     std::cout << "\n";
     // for (long i = 0; i < std::ssize(s3); ++i) { // C++20
     for (size_t i = 0; i < s3.size(); ++i) { // for i in range(0, len(s1))
+        // ++i <=> i += 1
         std::cout << s3[i] << ", ";
     }
     std::cout << "\n";
@@ -57,8 +58,8 @@ auto main() -> int {                   // def main() -> int:
     std::cout << "\n";
 
     auto arr2 = arr; // arr2 = arr.copy() или arr2 = arr[:], а не arr = arr2
-    arr2[2] = 5;     // выглядит как в python
-    arr2.at(1) = 6;  // работает как в python
+    arr2[2] += 4;    // выглядит как в python
+    arr2.at(1) += 4; // работает как в python
     // Меняя arr2 мы не меняем arr, что хорошо
     for (auto elem : arr)
         std::cout << elem << ", ";
