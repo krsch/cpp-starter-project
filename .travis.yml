@@ -1,7 +1,13 @@
 language: cpp
-compiler:
-  - clang
-  - gcc
+addons:
+  apt:
+    packages:
+      - g++-10
+      - clang-11
+
+env:
+  - CC=gcc-10 CXX=g++-10
+  - CC=clang-10 CXX=clang++-10
 dist: focal
 os:
   - linux

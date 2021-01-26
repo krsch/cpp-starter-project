@@ -12,8 +12,9 @@ set_project_warnings(default)
 include(cmake/conan.cmake)
 conan_cmake_run(
   REQUIRES
-  fmt/7.1.2
-  BASIC_SETUP CMAKE_TARGETS BUILD missing)
+  fmt/7.1.2 backward-cpp/1.5
+  BASIC_SETUP CMAKE_TARGETS BUILD all PROFILE default PROFILE_AUTO ALL
+  )
 
 enable_testing()
 add_subdirectory(external/doctest)
