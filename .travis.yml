@@ -11,8 +11,6 @@ env:
 dist: focal
 os:
   - linux
-  - windows
-  - macos
 before_install:
   - pip3 install --user conan
 
