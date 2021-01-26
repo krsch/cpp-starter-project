@@ -14,7 +14,7 @@ os:
   - windows
   - macos
 before_install:
-  - pip3 install conan
+  - pip3 install --user conan
 
 script:
   - mkdir -p build
