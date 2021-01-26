@@ -36,14 +36,14 @@ auto step1() -> void {
 
 struct List2 {
     int value;
-    std::shared_ptr<List1> next /* = nullptr */;
+    std::shared_ptr<List2> next /* = nullptr */;
     explicit List2(int v) { value = v; }
 };
 auto print2(List2 const &list) -> void {
     fmt::print("{}{}", list.value, (list.next ? ", " : "\n"));
     // cond ? expr1 : expr2 это как в python было expr1 if cond else expr2
     if (list.next)
-        print(*list.next);
+        print2(*list.next);
 }
 auto step2() {
     // print2(3); // ERROR! потому что explicit
@@ -128,6 +128,36 @@ auto step4() {
     auto e3 = example1({2}, {3});
     fmt::print("e1 = {}, e2 = {}, e3 = {}\n", e1.v, e2.v, e3.v);
 }
+struct List3 {
+    int value;
+    std::shared_ptr<List3> next /* = nullptr */;
+    explicit List3(int v) { value = v; }
+    List3(List3 const &other) {
+        value = other.value;
+        if (other.next)
+            next = std::make_shared<List3>(*other.next);
+    }
+    List3 &operator=(List3 const &other) {
+        if (this == &other) // если l3 = l3; просто оптимизация
+            return *this;
+        value = other.value;
+        if (other.next)
+            next = std::make_shared<List3>(*other.next);
+        else
+            next = nullptr;
+        return *this;
+    }
+    ~List3() { fmt::print("List3 destroyed\n"); }
+};
+
+auto step5() {
+    auto l1 = List3(3);
+    l1.next = std::make_shared<List3>(2);
+    auto l2 = l1;
+    l2.next->value = 4;
+    l1 = l2;
+    fmt::print("l1: {}, {}\n", l1.value, l1.next->value);
+}
 
 int main() {
     std::cout << fmt::format("not_random number is {0:04}\n", not_random());
@@ -136,5 +166,6 @@ int main() {
     step2();
     step3();
     step4();
+    step5();
     return 0;
 }
