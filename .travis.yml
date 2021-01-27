@@ -11,7 +11,9 @@ os:
   - windows
   - osx
 before_install:
-  - pip3 install --user conan
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install conan; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip3 install --user conan; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install conan; fi
 
 script:
   - mkdir -p build
