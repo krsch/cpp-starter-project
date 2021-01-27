@@ -8,12 +8,14 @@ addons:
 dist: focal
 os:
   - linux
+  - windows
+  - osx
 before_install:
   - pip3 install --user conan
 
 script:
   - mkdir -p build
   - cd build
-  - cmake .. -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++-10 -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc-10
+  - cmake ..
   - cmake --build .
   - ctest
