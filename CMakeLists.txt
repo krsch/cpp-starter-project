@@ -12,8 +12,9 @@ set_project_warnings(default)
 include(cmake/conan.cmake)
 set(CONAN_DISABLE_CHECK_COMPILER ON)
 conan_cmake_run(
-  REQUIRES
-  fmt/7.1.2 backward-cpp/1.5
+  CONANFILE conanfile.txt
+  # REQUIRES
+  # fmt/7.1.2 backward-cpp/1.5
   BASIC_SETUP CMAKE_TARGETS BUILD missing
   ENV CC=${CMAKE_C_COMPILER}
   ENV CXX=${CMAKE_CXX_COMPILER}
