@@ -1,3 +1,4 @@
+// Для сборки нужно установить conan: https://conan.io/downloads.html
 #include "lib.hpp"
 #include <array>
 #include <fmt/core.h>
@@ -160,6 +161,8 @@ auto step5() {
 }
 
 int main() {
+    // syntax:
+    // https://docs-python.ru/tutorial/vstroennye-funktsii-interpretatora-python/funktsija-format/
     std::cout << fmt::format("not_random number is {0:04}\n", not_random());
     fmt::print("Another string and a vector {}\n", std::vector{1, 2, 3, 4});
     step1();
