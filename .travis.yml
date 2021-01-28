@@ -16,7 +16,7 @@ osx_image: xcode12.2
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install conan; export PATH=$(cmd.exe //c "refreshenv > nul & C:\Progra~1\Git\bin\bash -c 'echo \$PATH' "); fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip3 install --user conan; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH=$PATH:$HOME/Library/Python/3.9/bin; python3 -m pip install --user conan; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH=$PATH:$(python3 -m site --user-base); python3 -m pip install --user conan; fi
 
 script:
   - mkdir -p build
