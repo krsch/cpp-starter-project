@@ -13,7 +13,10 @@ include(cmake/conan.cmake)
 conan_cmake_run(
   REQUIRES
   fmt/7.1.2
-  BASIC_SETUP CMAKE_TARGETS BUILD missing)
+  BASIC_SETUP CMAKE_TARGETS BUILD missing
+  ENV CONAN_CMAKE_PROGRAM=${CMAKE_COMMAND}
+  ENV CXX=${CMAKE_CXX_COMPILER}
+  )
 
 enable_testing()
 add_subdirectory(external/doctest)
