@@ -10,12 +10,19 @@ target_compile_features(default INTERFACE cxx_std_17)
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(default)
 include(cmake/conan.cmake)
+get_property(languages GLOBAL PROPERTY ENABLED_LANGUAGES)
+set(ENV_FOR_C CC)
+set(ENV_FOR_CXX CXX)
+set(ENV_FOR_Fortran FC)
+foreach(language ${languages})
+  list(APPEND ENV "${ENV_FOR_${language}}=${CMAKE_${language}_COMPILER}")
+endforeach()
 conan_cmake_run(
   REQUIRES
   fmt/7.1.2
   BASIC_SETUP CMAKE_TARGETS BUILD missing
   ENV CONAN_CMAKE_PROGRAM="${CMAKE_COMMAND}"
-  ENV CXX="${CMAKE_CXX_COMPILER}"
+  ${ENV}
   )
 
 enable_testing()
