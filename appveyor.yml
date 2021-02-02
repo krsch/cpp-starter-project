@@ -5,7 +5,9 @@ image:
   - macos-mojave
   - macos
 install:
-- cmd: git submodule update --init --recursive
+- git submodule update --init --recursive
+- pip3 install --user conan
+- refreshenv
 build_script:
   - cmake -B build
   - cmake --build build
