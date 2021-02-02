@@ -150,7 +150,12 @@ struct List3 {
         return *this;
     }
     List3(List3 &&other) = default;
-    auto operator=(List3 &&other) -> List3 & = default;
+    auto operator=(List3 &&other) noexcept -> List3 & {
+        value = std::move(other.value);
+        next = std::move(other.next);
+        return *this;
+    }
+
     ~List3() { fmt::print("List3 destroyed\n"); }
     // Rule of 0: не пишите ни оператор/конструктор копирования,
     // ни оператор/конструктор перемещения, ни деструктор
@@ -173,12 +178,87 @@ auto step5() {
     fmt::print("l1: {}, {}\n", l1.value, l1.next->value);
 }
 
+auto f() /*noexcept*/ { throw std::invalid_argument(""); }
+
 auto step6() {
-    fmt::print("step6() start\n");
-    auto l1 = List3(0);
-    l1 = make_mylist();
-    auto l2 = std::move(l1);
-    fmt::print("step6() end\n");
+    {
+        fmt::print("step6() start\n");
+        auto l1 = List3(0);
+        l1 = make_mylist();
+        auto l2 = std::move(l1);
+        fmt::print("step6() end\n");
+    }
+    try {
+        f();
+    } catch (std::invalid_argument const &error) {
+        fmt::print(std::cerr, "error: {}\n", error.what());
+    }
+}
+
+struct List4 {
+    int value;
+
+  private:
+    std::unique_ptr<List4> m_next;
+    List4 *prev = nullptr;
+
+  public:
+    explicit List4(int v) noexcept : value(v) {}
+    List4(int v, List4 *arg_prev) noexcept : value(v), prev(arg_prev) {}
+    // ^ То же, что value = v, но использует конструктор, а не присваивание
+    List4(List4 const &other, List4 *arg_prev = nullptr)
+        : value(other.value),
+          m_next(other.m_next ? std::make_unique<List4>(*other.m_next, this)
+                              : nullptr),
+          prev(arg_prev) {}
+    auto operator=(List4 const &other) -> List4 & {
+        if (this != &other) {
+            value = other.value;
+            m_next = other.m_next ? std::make_unique<List4>(*other.m_next, this)
+                                  : nullptr;
+        }
+        return *this;
+    }
+    List4(List4 &&) = default;
+    auto operator=(List4 &&) -> List4 & = default;
+    auto &unsafe_next() noexcept { return *m_next; }
+    auto &unsafe_next() const noexcept { return *m_next; }
+    auto &next() {
+        if (m_next)
+            return *m_next;
+        throw std::logic_error("calling next on null");
+    }
+    auto &next() const {
+        if (m_next)
+            return *m_next;
+        throw std::logic_error("calling next on null");
+    }
+
+    auto has_next() const { return bool(m_next); }
+
+    void insert_after(List4 &&l) {
+        List4 *last = &l;
+        while (last->m_next)
+            last = last->m_next.get();
+        last->m_next = std::move(m_next);
+        if (last->m_next)
+            last->m_next->prev = last;
+        m_next = std::make_unique<List4>(std::move(l));
+        m_next->prev = this;
+    }
+};
+auto print(List4 const &l) -> void {
+    std::cout << l.value << ", ";
+    if (l.has_next())
+        print(l.unsafe_next());
+}
+
+auto step7() {
+    auto l1 = List4(3);
+    l1.insert_after(List4(2));
+    auto l2 = l1;
+    std::swap(l2, l1);
+    auto l3 = std::move(l1);
 }
 
 int main() {
@@ -192,5 +272,6 @@ int main() {
     step4();
     step5();
     step6();
+    step7();
     return 0;
 }
