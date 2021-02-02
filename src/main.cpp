@@ -88,7 +88,7 @@ struct Stack {
 std::ostream &operator<<(std::ostream &stream, Stack const &stack) {
     stream << "Stack{";
     for (size_t i = 0; i < stack.top; ++i)
-        stream << i << (i == stack.top - 1 ? "" : ", ");
+        stream << stack[i] << (i == stack.top - 1 ? "" : ", ");
     stream << "}";
     return stream;
 }
@@ -137,6 +137,7 @@ struct List3 {
         value = other.value;
         if (other.next)
             next = std::make_shared<List3>(*other.next);
+        // *next = *other.next;
     }
     List3 &operator=(List3 const &other) {
         if (this == &other) // если l3 = l3; просто оптимизация
@@ -148,8 +149,20 @@ struct List3 {
             next = nullptr;
         return *this;
     }
+    List3(List3 &&other) = default;
+    auto operator=(List3 &&other) -> List3 & = default;
     ~List3() { fmt::print("List3 destroyed\n"); }
+    // Rule of 0: не пишите ни оператор/конструктор копирования,
+    // ни оператор/конструктор перемещения, ни деструктор
+    // Rule of 5: если реализуете одного из них, реализуйте все 5
 };
+
+List3 make_mylist() {
+    List3 l(1);
+    l.next = std::make_shared<List3>(2);
+    l.next->next = std::make_shared<List3>(3);
+    return l;
+}
 
 auto step5() {
     auto l1 = List3(3);
@@ -158,6 +171,14 @@ auto step5() {
     l2.next->value = 4;
     l1 = l2;
     fmt::print("l1: {}, {}\n", l1.value, l1.next->value);
+}
+
+auto step6() {
+    fmt::print("step6() start\n");
+    auto l1 = List3(0);
+    l1 = make_mylist();
+    auto l2 = std::move(l1);
+    fmt::print("step6() end\n");
 }
 
 int main() {
@@ -170,5 +191,6 @@ int main() {
     step3();
     step4();
     step5();
+    step6();
     return 0;
 }
