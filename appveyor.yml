@@ -4,9 +4,12 @@ image:
   - Ubuntu2004
   - macos-mojave
   - macos
-stack: python
+stack: python 3.9
+environment:
+  PYTHON: "C:\\Python39-x64"
 install:
 - git submodule update --init --recursive
+- cmd: set PATH=%PATH%;%PYTHON%/Scripts/
 - cmd: pip install --user conan
 - cmd: refreshenv
 - sh:  pip3 install --user conan
