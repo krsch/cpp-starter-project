@@ -1,6 +1,5 @@
 [requires]
 fmt/7.1.2
-backward-cpp/1.5
 
 [generators]
 cmake
