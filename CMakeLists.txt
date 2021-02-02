@@ -15,7 +15,11 @@ set(ENV_FOR_C CC)
 set(ENV_FOR_CXX CXX)
 set(ENV_FOR_Fortran FC)
 foreach(language ${languages})
-  list(APPEND ENV "${ENV_FOR_${language}}=\"${CMAKE_${language}_COMPILER}\"")
+  if(ENV_FOR_${language})
+    list(APPEND ENV "${ENV_FOR_${language}}=${CMAKE_${language}_COMPILER}")
+  else()
+    list(APPEND ENV "${language}=${CMAKE_${language}_COMPILER}")
+  endif()
 endforeach()
 conan_cmake_run(
   CONANFILE conanfile.txt
