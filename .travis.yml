@@ -1,15 +1,15 @@
 language: cpp
-addons:
-  apt:
-    packages:
-      - g++-10
-      - clang-11
-  # homebrew:
-  #   packages:
-  #     - conan
+# addons:
+#   apt:
+#     packages:
+#       - g++-10
+#       - clang-11
+#   homebrew:
+#     packages:
+#       - conan
 os:
-  # - linux
-  # - windows
+  - linux
+  - windows
   - osx
 dist: focal
 osx_image: xcode12.2
