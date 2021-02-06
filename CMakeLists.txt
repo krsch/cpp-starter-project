@@ -15,14 +15,16 @@ set(ENV_FOR_C CC)
 set(ENV_FOR_CXX CXX)
 set(ENV_FOR_Fortran FC)
 foreach(language ${languages})
-  list(APPEND ENV "${ENV_FOR_${language}}=${CMAKE_${language}_COMPILER}")
+  if(ENV_FOR_${language})
+    list(APPEND ENV "${ENV_FOR_${language}}=${CMAKE_${language}_COMPILER}")
+  else()
+    list(APPEND ENV "${language}=${CMAKE_${language}_COMPILER}")
+  endif()
 endforeach()
 conan_cmake_run(
-  REQUIRES
-  fmt/7.1.2
+  CONANFILE conanfile.txt
   BASIC_SETUP CMAKE_TARGETS BUILD missing
-  ENV CONAN_CMAKE_PROGRAM="${CMAKE_COMMAND}"
-  ${ENV}
+  ENV CONAN_CMAKE_PROGRAM="${CMAKE_COMMAND}" ${ENV}
   )
 
 enable_testing()
