@@ -219,8 +219,17 @@ struct List4 {
         }
         return *this;
     }
-    List4(List4 &&) = default;
-    auto operator=(List4 &&) -> List4 & = default;
+    List4(List4 &&other) : value(other.value), m_next(std::move(other.m_next)) {
+        if (m_next)
+            m_next->prev = this;
+    }
+    auto operator=(List4 &&other) -> List4 & {
+        value = other.value;
+        m_next = std::move(other.m_next);
+        if (m_next)
+            m_next->prev = this;
+        return *this;
+    }
     auto &unsafe_next() noexcept { return *m_next; }
     auto &unsafe_next() const noexcept { return *m_next; }
     auto &next() {
