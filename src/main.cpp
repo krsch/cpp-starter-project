@@ -16,6 +16,11 @@ template <typename T> struct List {
     List(T a_value) : value(a_value) {}
 };
 
+auto step01() {
+    List<int> l1;
+    List<char> l2;
+}
+
 template <typename T> List<T> make_list123() {
     List<T> result{1};
     result.next = std::make_unique<List<T>>(2);
@@ -45,11 +50,6 @@ List<T> make_list(T first, Args... rest) {
     return result;
 }
 // Конец продвинутой темы
-
-auto step01() {
-    List<int> l1;
-    List<char> l2;
-}
 
 auto smaller_than_4(int value) { return value < 4; }
 
