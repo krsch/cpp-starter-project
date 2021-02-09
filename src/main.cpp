@@ -92,6 +92,19 @@ auto step03() {
         else
             ++lit;
     fmt::print("After loop with erase {}\n", l);
+    vec = std::vector{3, 2, 4, 5, 1};
+    std::nth_element(vec.begin(), vec.begin() + 2, vec.end());
+    // vec[2] == 3
+    // vec[i] <= vec[2] для i < 2
+    // vec[i] >= vec[2] для i > 2
+    fmt::print("After nth element: {}\n", vec);
+}
+
+void simple_sort(std::vector<int> &vec) {
+    for (auto it = vec.begin(); it != vec.end(); ++it) {
+        auto min_it = std::min_element(it, vec.end());
+        std::swap(*it, *min_it);
+    }
 }
 
 int main() {
