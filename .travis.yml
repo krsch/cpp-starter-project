@@ -14,13 +14,14 @@ os:
 dist: focal
 osx_image: xcode12.2
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install conan; export PATH=$(cmd.exe //c "refreshenv > nul & C:\Progra~1\Git\bin\bash -c 'echo \$PATH' "); fi
+  - OPTS=""
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install conan; export PATH=$(cmd.exe //c "refreshenv > nul & C:\Progra~1\Git\bin\bash -c 'echo \$PATH' "); OPTS="-A x64"; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip3 install --user conan; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then export PATH=$PATH:$(python3 -m site --user-base)/bin; python3 -m pip install --user conan; fi
 
 script:
   - mkdir -p build
   - cd build
-  - cmake ..
+  - cmake .. $OPTS
   - cmake --build .
   - ctest
