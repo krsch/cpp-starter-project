@@ -43,5 +43,39 @@ static void BM_random(benchmark::State &state) {
 }
 // Register the function as a benchmark
 BENCHMARK(BM_random);
+
+static void BM_all_orthogonal(benchmark::State &state) {
+    // Perform setup here
+    const size_t n = 1000;
+    auto a = std::vector(n, std::vector(n, 0.0)); // vector длины n из 0.0
+    auto rng = std::default_random_engine();
+    auto dist = std::normal_distribution<>();
+    for (auto _ : state) {
+        // This code gets timed
+        for (auto &&row : a)
+            for (auto &&elem : row)
+                elem = dist(rng);
+        benchmark::DoNotOptimize(orthogonal_ratio(a, 0.1));
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_all_orthogonal);
+
+static void BM_all_random(benchmark::State &state) {
+    // Perform setup here
+    const size_t n = 1000;
+    auto a = std::vector(n, std::vector(n, 0.0)); // vector длины n из 0.0
+    auto rng = std::default_random_engine();
+    auto dist = std::normal_distribution<>();
+    for (auto _ : state) {
+        // This code gets timed
+        for (auto &&row : a)
+            for (auto &&elem : row)
+                elem = dist(rng);
+        benchmark::DoNotOptimize(a);
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_all_random);
 // Run the benchmark
 BENCHMARK_MAIN();

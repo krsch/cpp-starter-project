@@ -1,4 +1,5 @@
 #include "lib.hpp"
+#include <numeric>
 #include <random>
 #include <vector>
 
@@ -36,16 +37,23 @@ auto is_orthogonal(std::vector<double> const &a, std::vector<double> const &b,
                    double precision) noexcept -> bool {
     if (a.size() != b.size())
         return false;
-    double sum = 0;
-    for (size_t i = 0; i < a.size(); ++i)
-        sum += a[i] * b[i];
-    double sum_a = 0;
-    for (auto elem : a)
-        sum_a += elem * elem;
-    double sum_b = 0;
-    for (auto elem : b)
-        sum_b += elem * elem;
+    double sum = std::inner_product(a.begin(), a.end(), b.begin(), 0.0);
+    double sum_a = std::inner_product(a.begin(), a.end(), a.begin(), 0.0);
+    double sum_b = std::inner_product(b.begin(), b.end(), b.begin(), 0.0);
     return (sum / std::sqrt(sum_a * sum_b)) < precision;
+}
+
+auto orthogonal_ratio(std::vector<std::vector<double>> const &matrix,
+                      double precision) noexcept -> double {
+    int orthogonal_count = 0;
+    int count = 0;
+    for (size_t i = 0; i < matrix.size(); ++i)
+        for (size_t j = 0; j < i; ++j) {
+            orthogonal_count +=
+                int(is_orthogonal(matrix[i], matrix[j], precision));
+            ++count;
+        }
+    return double(orthogonal_count) / count;
 }
 
 auto almost_orthogonal_probability(size_t n, double precision) noexcept

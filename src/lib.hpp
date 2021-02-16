@@ -15,3 +15,5 @@ extern auto
 almost_orthogonal_probability(size_t n,
                               // NOLINTNEXTLINE(readability-magic-numbers)
                               double precision = 1e-4) noexcept -> double;
+extern auto orthogonal_ratio(std::vector<std::vector<double>> const &matrix,
+                             double precision) noexcept -> double;
