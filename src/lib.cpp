@@ -88,11 +88,11 @@ auto almost_orthogonal_probability(size_t n, double precision) noexcept
     -> double {
     auto a = std::vector(n, 0.0); // vector длины n из 0.0
     auto b = std::vector(n, 0.0);
-    const int iterations = n * (n - 1) / 2;
+    const size_t iterations = n * (n - 1) / 2;
     int orthogonal_count = 0;
     auto rng = std::default_random_engine();
     auto dist = std::normal_distribution<>();
-    for (int i = 0; i < iterations; ++i) {
+    for (size_t i = 0; i < iterations; ++i) {
         for (auto &&elem : a)
             elem = dist(rng);
         for (auto &&elem : b)
@@ -100,7 +100,7 @@ auto almost_orthogonal_probability(size_t n, double precision) noexcept
         orthogonal_count += static_cast<int>(is_orthogonal(a, b, precision));
         // static_cast<int>(...) - это как int(...)
     }
-    return double(orthogonal_count) / iterations;
+    return double(orthogonal_count) / double(iterations);
 }
 
 auto almost_orthogonal_probability_matrix(size_t n, double precision) noexcept
