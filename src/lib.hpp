@@ -17,3 +17,7 @@ almost_orthogonal_probability(size_t n,
                               double precision = 1e-4) noexcept -> double;
 extern auto orthogonal_ratio(std::vector<std::vector<double>> const &matrix,
                              double precision) noexcept -> double;
+
+extern auto almost_orthogonal_probability_matrix(size_t n,
+                                                 double precision) noexcept
+    -> double;

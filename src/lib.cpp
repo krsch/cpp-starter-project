@@ -37,16 +37,24 @@ auto is_orthogonal(std::vector<double> const &a, std::vector<double> const &b,
                    double precision) noexcept -> bool {
     if (a.size() != b.size())
         return false;
-    double sum = std::inner_product(a.begin(), a.end(), b.begin(), 0.0);
-    double sum_a = std::inner_product(a.begin(), a.end(), a.begin(), 0.0);
-    double sum_b = std::inner_product(b.begin(), b.end(), b.begin(), 0.0);
-    return (sum / std::sqrt(sum_a * sum_b)) < precision;
+    // double sum = std::inner_product(a.begin(), a.end(), b.begin(), 0.0);
+    // double sum_a = std::inner_product(a.begin(), a.end(), a.begin(), 0.0);
+    // double sum_b = std::inner_product(b.begin(), b.end(), b.begin(), 0.0);
+    double sum = 0;
+    double sum_a = 0;
+    double sum_b = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+        sum += a[i] * b[i];
+        sum_a += a[i] * a[i];
+        sum_b += b[i] * b[i];
+    }
+    return std::abs(sum / std::sqrt(sum_a * sum_b)) < precision;
 }
 
 auto orthogonal_ratio(std::vector<std::vector<double>> const &matrix,
                       double precision) noexcept -> double {
     int orthogonal_count = 0;
-    int count = 0;
+    int count = 0; // n*(n-1)/2
     for (size_t i = 0; i < matrix.size(); ++i)
         for (size_t j = 0; j < i; ++j) {
             orthogonal_count +=
@@ -60,7 +68,7 @@ auto almost_orthogonal_probability(size_t n, double precision) noexcept
     -> double {
     auto a = std::vector(n, 0.0); // vector длины n из 0.0
     auto b = std::vector(n, 0.0);
-    const int iterations = 1000;
+    const int iterations = n * (n - 1) / 2;
     int orthogonal_count = 0;
     auto rng = std::default_random_engine();
     auto dist = std::normal_distribution<>();
@@ -70,6 +78,23 @@ auto almost_orthogonal_probability(size_t n, double precision) noexcept
         for (auto &&elem : b)
             elem = dist(rng);
         orthogonal_count += static_cast<int>(is_orthogonal(a, b, precision));
+        // static_cast<int>(...) - это как int(...)
+    }
+    return double(orthogonal_count) / iterations;
+}
+
+auto almost_orthogonal_probability_matrix(size_t n, double precision) noexcept
+    -> double {
+    auto a = std::vector(n, std::vector(n, 0.0));
+    const int iterations = 1;
+    double orthogonal_count = 0;
+    auto rng = std::default_random_engine();
+    auto dist = std::normal_distribution<>();
+    for (int i = 0; i < iterations; ++i) {
+        for (auto &&row : a)
+            for (auto &&elem : row)
+                elem = dist(rng);
+        orthogonal_count += orthogonal_ratio(a, precision);
         // static_cast<int>(...) - это как int(...)
     }
     return double(orthogonal_count) / iterations;
