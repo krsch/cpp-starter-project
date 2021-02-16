@@ -22,6 +22,16 @@ static void BM_probability_mat(benchmark::State &state) {
 // Register the function as a benchmark
 BENCHMARK(BM_probability_mat);
 
+static void BM_probability_mat2(benchmark::State &state) {
+    // Perform setup here
+    for (auto _ : state) {
+        // This code gets timed
+        almost_orthogonal_probability_matrix2(100, 0.1);
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_probability_mat2);
+
 static void BM_orthogonal(benchmark::State &state) {
     // Perform setup here
     const size_t n = 1000;
