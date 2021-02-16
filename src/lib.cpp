@@ -1,4 +1,5 @@
 #include "lib.hpp"
+#include <Eigen/Core>
 #include <numeric>
 #include <random>
 #include <vector>
@@ -84,6 +85,23 @@ auto orthogonal_ratio2(std::vector<std::vector<double>> const &matrix,
     return double(orthogonal_count) / count;
 }
 
+auto orthogonal_ratio2(Eigen::MatrixXd const &matrix, double precision) noexcept
+    -> double {
+    int orthogonal_count = 0;
+    int count = 0; // n*(n-1)/2
+    auto norm = Eigen::VectorXd(matrix.rows());
+    for (int r = 0; r < matrix.rows(); ++r)
+        norm[r] = matrix.row(r).norm();
+    for (int i = 0; i < matrix.rows(); ++i)
+        for (int j = 0; j < i; ++j) {
+            bool orth = std::abs(matrix.row(i).dot(matrix.row(j)) / norm[i] /
+                                 norm[j]) < precision;
+            orthogonal_count += int(orth);
+            ++count;
+        }
+    return double(orthogonal_count) / count;
+}
+
 auto almost_orthogonal_probability(size_t n, double precision) noexcept
     -> double {
     auto a = std::vector(n, 0.0); // vector длины n из 0.0
@@ -131,6 +149,23 @@ auto almost_orthogonal_probability_matrix2(size_t n, double precision) noexcept
         for (auto &&row : a)
             for (auto &&elem : row)
                 elem = dist(rng);
+        orthogonal_count += orthogonal_ratio2(a, precision);
+        // static_cast<int>(...) - это как int(...)
+    }
+    return orthogonal_count / iterations;
+}
+
+auto almost_orthogonal_probability_eigen(size_t n, double precision) noexcept
+    -> double {
+    auto a = Eigen::MatrixXd(n, n);
+    const int iterations = 1;
+    double orthogonal_count = 0;
+    auto rng = std::default_random_engine();
+    auto dist = std::normal_distribution<>();
+    for (int i = 0; i < iterations; ++i) {
+        for (int row = 0; row < a.rows(); ++row)
+            for (int col = 0; col < a.cols(); ++col)
+                a(row, col) = dist(rng);
         orthogonal_count += orthogonal_ratio2(a, precision);
         // static_cast<int>(...) - это как int(...)
     }

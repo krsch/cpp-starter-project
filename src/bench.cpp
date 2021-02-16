@@ -32,6 +32,16 @@ static void BM_probability_mat2(benchmark::State &state) {
 // Register the function as a benchmark
 BENCHMARK(BM_probability_mat2)->Range(10, 200);
 
+static void BM_probability_eigen(benchmark::State &state) {
+    // Perform setup here
+    for (auto _ : state) {
+        // This code gets timed
+        almost_orthogonal_probability_eigen(state.range(0), 0.1);
+    }
+}
+// Register the function as a benchmark
+BENCHMARK(BM_probability_eigen)->Range(10, 200);
+
 static void BM_orthogonal(benchmark::State &state) {
     // Perform setup here
     const size_t n = 1000;

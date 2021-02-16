@@ -24,3 +24,6 @@ extern auto almost_orthogonal_probability_matrix(size_t n,
 extern auto almost_orthogonal_probability_matrix2(size_t n,
                                                   double precision) noexcept
     -> double;
+extern auto almost_orthogonal_probability_eigen(size_t n,
+                                                double precision) noexcept
+    -> double;
