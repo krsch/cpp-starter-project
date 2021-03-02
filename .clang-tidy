@@ -2,6 +2,7 @@
 Checks: 'bugprone-*,clang-analyzer-cplusplus.InnerPointer,cppcoreguidelines-*
     ,readability-*,clang-analyzer-core-*,clang-analyzer-cplusplus-*
     ,clang-analyzer-deadcode-*,clang-analyzer-nullability-*
+    ,-readability-qualified-auto
     ,-modernize-use-trailing-return-type,
     ,-hicpp-braces-around-statements,
     ,-readability-braces-around-statements,

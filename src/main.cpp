@@ -1,10 +1,10 @@
 #include "lib.hpp"
+#include <algorithm>
+#include <cctype>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
 #include <string_view>
-#include <algorithm>
-#include <cctype>
 
 struct ListNode {
     int value;
@@ -48,7 +48,16 @@ struct List {
             node = node->next.get();
             return iterator{cur};
         }
-        auto operator*() const { return node->value; }
+        auto operator--() -> iterator & { // --a
+            node = node->prev;
+            return *this;
+        }
+        auto operator--(int) -> iterator { // a--
+            auto *cur = node;
+            node = node->prev;
+            return iterator{cur};
+        }
+        auto operator*() const -> auto & { return node->value; }
         auto operator->() const { return &node->value; }
     };
 
@@ -56,43 +65,12 @@ struct List {
     auto end() const { return iterator{nullptr}; }
 };
 
-struct words_iterator {
-    std::string_view str;
-
-    auto operator==(words_iterator const &other) const {
-        return str == other.str;
-    }
-    auto operator!=(words_iterator const &other) const {
-        return str != other.str;
-    }
-    auto operator*() const {
-        auto it = std::find_if(str.begin(), str.end(),
-                               [](char c) { return std::isalpha(c) == 0; });
-        return str.substr(0, it - str.begin());
-    }
-    auto operator++() -> words_iterator&{
-        auto nonalpha = std::find_if(str.begin(), str.end(), [](char c) {
-            return std::isalpha(c) == 0;
-        });
-        auto alpha = std::find_if(nonalpha, str.end(), [](char c) {
-            return std::isalpha(c) != 0;
-        });
-        str.remove_prefix(alpha - str.begin());
-        return *this;
-    }
-};
-
-struct words_range {
-    std::string_view str;
-    auto begin() const { return words_iterator{str}; }
-    auto end() const { return words_iterator{str.substr(str.size())}; }
-};
-
 int main() {
     auto mylist = List{1, 2, 3, 4};
     for (auto value : mylist)
         std::cout << value << ", ";
     std::cout << "\n";
+    std::reverse(mylist.begin(), mylist.end());
     using namespace std::literals;
     auto str = "hello world!"s;
     for (auto word : words_range{str})
