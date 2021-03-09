@@ -2,18 +2,21 @@
 #include <cmath>
 #include <fmt/core.h>
 #include <memory>
+#include <set>
 
 struct Shape {
+  public: // есть неявно
     int x, y;
     Shape(int x, int y) : x(x), y(y) {}
-    virtual ~Shape() = default;
+    virtual ~Shape() noexcept = default;
     virtual void draw() const = 0;
     virtual auto circumference() const -> float = 0;
 };
 
-struct Rectangle : Shape {
-    int width, height;
+auto area(Shape const &shape) -> float;
 
+class Rectangle : virtual public Shape {
+  public:
     Rectangle(int x = 0, int y = 0, int width = 0, int height = 0)
         : Shape{x, y}, width(width), height(height) {}
     // Shape::draw = Rectangle::draw
@@ -24,24 +27,34 @@ struct Rectangle : Shape {
     auto circumference() const -> float override {
         return float(2 * width + 2 * height);
     }
+
+  private:
+    int width, height;
+    friend auto area(Shape const &shape) -> float;
+    friend auto area(Rectangle const &shape) -> float;
 };
 
-struct Diamond : Shape {
-    int side;
-    float angle;
+struct Diamond : virtual Shape {
     Diamond(int x, int y, int side, float angle)
         : Shape{x, y}, side{side}, angle{angle} {}
     void draw() const override {
         fmt::print("Diamond({}, {} rad)", side, angle);
     }
     auto circumference() const -> float override { return float(4 * side); }
+
+  protected:
+    int side;
+    float angle;
+    friend auto area(Shape const &shape) -> float;
 };
 
 constexpr double pi = 3.1415926;
 struct Square : Rectangle, Diamond {
     Square(int x, int y, int side)
-        : Rectangle(x, y, side, side), Diamond(x, y, side, pi / 2) {}
+        : Shape{x, y}, Rectangle(x, y, side, side),
+          Diamond(x, y, side, pi / 2) {}
     void draw() const override { Rectangle::draw(); }
+    auto circumference() const -> float override { return float(4 * side); }
 };
 
 void call_draw(Shape const &shape) { shape.draw(); }
@@ -81,13 +94,14 @@ int main() {
     new_shape->draw();
     new_rect = down_cast(std::move(new_shape));
     call_draw_and_delete(std::move(new_rect));
-    auto shapes = std::vector<std::unique_ptr<Shape>>{std::move(new_rect)};
+    Square sq(0, 0, 1);
+    call_draw(sq);
+    auto shapes = std::vector<std::unique_ptr<Shape>>{};
+    shapes.emplace_back(std::move(new_rect));
+    shapes.emplace_back(std::make_unique<Square>(0, 0, 1));
     float sum_of_circumferences = 0.;
     for (auto const &shape : shapes)
         sum_of_circumferences += shape->circumference();
 
-    Square sq(0, 0, 1);
-    call_draw(sq);
-    shapes.emplace_back(std::make_unique<Square>(0, 0, 1));
     return 0;
 }
