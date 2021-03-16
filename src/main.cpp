@@ -1,8 +1,20 @@
 #include "lib.hpp"
 #include <cmath>
 #include <fmt/core.h>
+#include <iostream>
 #include <memory>
+#include <ostream>
 #include <set>
+
+struct rect2d { // объявлен в другой библиотеке
+    float x, y, width, height;
+    // hidden friend
+    friend auto operator<<(std::ostream &s, rect2d const &r) noexcept
+        -> std::ostream & {
+        return s << fmt::format("rect2d({},{},{},{})", r.x, r.y, r.width,
+                                r.height);
+    }
+};
 
 struct Shape {
   public: // есть неявно
@@ -28,10 +40,20 @@ class Rectangle : virtual public Shape {
         return float(2 * width + 2 * height);
     }
 
+    operator rect2d() const {
+        return rect2d{float(x), float(y), float(width), float(height)};
+    }
+
   private:
     int width, height;
     friend auto area(Shape const &shape) -> float;
     friend auto area(Rectangle const &shape) -> float;
+    // hidden friend
+    // friend auto operator<<(std::ostream &s, Rectangle const &r) noexcept
+    //     -> std::ostream & {
+    //     return s << fmt::format("Rectangle({},{},{},{})", r.x, r.y, r.width,
+    //                             r.height);
+    // }
 };
 
 struct Diamond : virtual Shape {
@@ -79,11 +101,16 @@ auto area(Shape const &shape) -> float {
     return 0;
 }
 
-auto area(Rectangle const &rect) { return rect.width * rect.height; }
+auto area(Rectangle const &rect) -> float { return rect.width * rect.height; }
+
+auto print2d(rect2d const &r) {
+    fmt::print("rect2d({},{},{},{})\n", r.x, r.y, r.width, r.height);
+}
 
 int main() {
     Rectangle rect;
     rect.draw();
+    print2d(rect);
     fmt::print("Rectangle area: {}\n", area(rect));
     Shape &my_shape = rect;
     my_shape.draw();
@@ -97,11 +124,32 @@ int main() {
     Square sq(0, 0, 1);
     call_draw(sq);
     auto shapes = std::vector<std::unique_ptr<Shape>>{};
-    shapes.emplace_back(std::move(new_rect));
+    shapes.emplace_back(std::make_unique<Rectangle>(0, 0, 1, 1));
     shapes.emplace_back(std::make_unique<Square>(0, 0, 1));
     float sum_of_circumferences = 0.;
     for (auto const &shape : shapes)
         sum_of_circumferences += shape->circumference();
 
+    std::cout << static_cast<rect2d>(sq) << "\n";
+    // std::cout << sq << "\n";
+    long a1 = (long)&rect;
+    // long b ( &rect);
+    long a2 = long(&rect);
+    using rect2d_ptr = rect2d *;
+    auto a3 = (rect2d *)&rect;   // BAD!!
+    auto a4 = rect2d_ptr(&rect); // BAD!!
+    // auto a4 = static_cast<rect2d*>(&rect);
+    std::cout << *a3 << " vs " << rect2d(rect) << "\n";
+
+    auto rect_ptr = static_cast<Rectangle *>(&sq);
+    auto sq_ptr = static_cast<Square *>(rect_ptr);
+    // Если rect_ptr не указывает на Square, то UB
+    auto sq_ptr2 = dynamic_cast<Square *>(rect_ptr);
+    // Если rect_ptr не указывает на Square, то nullptr
+    auto &sq_ref = dynamic_cast<Square &>(*rect_ptr);
+    // Если rect_ptr не указывает на Square, то throw std::bad_cast??
+    auto sq_ptr3 = dynamic_cast<Diamond *>(rect_ptr);
+    // Если rect_ptr не указывает на Square, то nullptr
+    // auto sq_ptr3 = static_cast<Diamond *>(rect_ptr);
     return 0;
 }

@@ -9,3 +9,5 @@ doctest_discover_tests(proj_test)
 
 add_executable(proj main.cpp lib.cpp)
 target_link_libraries(proj PUBLIC default CONAN_PKG::fmt)
+add_executable(point point.cpp)
+target_link_libraries(proj PUBLIC default)
