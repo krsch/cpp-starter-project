@@ -26,6 +26,7 @@ conan_cmake_run(
   BASIC_SETUP CMAKE_TARGETS BUILD missing
   ENV CONAN_CMAKE_PROGRAM="${CMAKE_COMMAND}" ${ENV}
   )
+find_package(Python3 COMPONENTS Development)
 
 enable_testing()
 add_subdirectory(external/doctest)

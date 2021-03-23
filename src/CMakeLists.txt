@@ -9,3 +9,6 @@ doctest_discover_tests(proj_test)
 
 add_executable(proj main.cpp lib.cpp)
 target_link_libraries(proj PUBLIC default CONAN_PKG::fmt)
+
+Python3_add_library(cpplib pylib.cpp)
+target_link_libraries(cpplib PUBLIC default CONAN_PKG::pybind11 CONAN_PKG::fmt)

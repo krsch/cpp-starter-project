@@ -1,5 +1,6 @@
 [requires]
 fmt/7.1.2
+pybind11/2.6.2
 
 [generators]
 cmake
