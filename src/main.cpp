@@ -3,12 +3,14 @@
 //}
 #include "lib.hpp"
 #include <array>
+#include <cmath>
 #include <cstdio>
+#include <fstream>
 #include <functional>
 #include <ios>
 #include <iostream>
-#include <fstream>
 #include <memory>
+#include <string>
 #include <system_error>
 #include <vector>
 
@@ -43,12 +45,31 @@ auto call(Fun f, Arg arg) {
     return f(arg);
 }
 
-int main() {
+int call(std::function<int()> fun) { return fun(); }
+
+void memory_mgmt() {
+    int *num = new int;
+    *num = 3;
+    delete num;
+    int *num2 = new int(2);
+    delete num2;
+    const int sz = 1024;
+    int *mem = new int[sz];
+    mem[sz - 1] = 0;
+    delete[] mem;
+    std::unique_ptr<int> num3{new int};
+    std::unique_ptr<int[]> mem3{new int[sz]};
+    std::vector<int> mem4(sz);
+}
+
+int main(int argc, char *argv[]) {
+    for (int i = 0; i < argc; ++i)
+        std::cout << argv[i] << "\n";
     std::cout << calc() << "\n";
     // int a[2]; // Не используйте C-шные массивы в коде на C++
     // sum(a); // ОШИБКА!!!!
-    std::string s = "Hello!\n";
     {
+        std::string s = "Hello!\n";
         std::ofstream f("123.bin", std::ios_base::binary | std::ios_base::trunc);
         f << s;
     } // Здесь f закрывается
@@ -56,8 +77,8 @@ int main() {
     std::string filename = "123.bin";
     unique_file f_uniq{fopen(filename.c_str(), "r")};
     // unique_file f_uniq{my_open(filename.c_str())};
-    auto *f = f_uniq.get(); // Если не хотим каждый раз писать get()
     if (f_uniq) {
+        auto *f = f_uniq.get(); // Если не хотим каждый раз писать get()
         std::string result;
         while (result.empty() || result.back() != '\n') {
             std::array<char, 4> buf;
@@ -74,12 +95,26 @@ int main() {
     }
     // fclose(f); // Если нет unique_ptr
 
-    std::unique_ptr<int, freer> ptr{make_buf(4)};
+    const size_t buf_len = 4;
+    auto ptr = std::unique_ptr<int[], freer>{make_buf(buf_len)};
+    for (size_t i = 0; i < buf_len; ++i)
+        std::cout << ptr[i] << ", ";
+    std::cout << "\n";
     auto fun = [](void* arg) {
         int *val = static_cast<int*>(arg);
         return *val;
     };
     int a = -3;
     std::cout << call_void(fun, &a) << std::endl;
+    auto fun2 = [](void *arg) {
+        float *val = static_cast<float *>(arg);
+        return static_cast<int>(std::lround(*val));
+    };
+    float b = -3;
+    std::cout << call_void(fun2, &b) << std::endl;
+    std::cout << call([b] { return int(std::lround(b)); }) << std::endl;
+    auto fun3 = std::lroundf;
+    std::cout << call(std::bind(fun3, b)) << std::endl;
+
     return 0;
 }

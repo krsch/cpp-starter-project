@@ -21,7 +21,7 @@ int str(void) {
 
 int *make_buf(unsigned size) {
     int *res = malloc(sizeof(int) * size);
-    return res;
+    return res; // Освобождать память с помощью free(res)
 }
 
 int call(int (*fun)(int), int arg) { return fun(arg); }
