@@ -7,8 +7,8 @@ int calc(void) {
     int b[3] = {1, 2}; // b[2] = 0
     int c[a[0]];       // Только в C
     c[0] = 0;
-    int l = sizeof(a) / sizeof(a[0]); // Длина массива
-    return a[0] + b[0] + c[0] + l;
+    int len = sizeof(a) / sizeof(a[0]); // Длина массива
+    return a[0] + b[0] + c[0] + len;
 }
 
 int sum(int arr[3]) { return arr[0] + arr[1] + arr[2]; }
@@ -24,6 +24,6 @@ int *make_buf(unsigned size) {
     return res; // Освобождать память с помощью free(res)
 }
 
-int call(int (*fun)(int), int arg) { return fun(arg); }
+int call_c(int (*fun)(int), int arg) { return fun(arg); }
 
 int call_void(int (*fun)(void *), void *arg) { return fun(arg); }

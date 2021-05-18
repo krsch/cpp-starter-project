@@ -20,7 +20,7 @@ struct fcloser {
 };
 using unique_file = std::unique_ptr<FILE, struct fcloser>;
 
-auto my_open(const char* filename, const char * mode = "r") {
+auto my_open(const char *filename, const char *mode = "r") {
     unique_file f_uniq{fopen(filename, mode)};
     if (f_uniq)
         return f_uniq;
@@ -31,17 +31,14 @@ struct freer {
     auto operator()(void *f) const noexcept { return free(f); }
 };
 
-int call(std::function<int(int)> fun, int arg) {
-    return fun(arg);
-}
+int call(std::function<int(int)> fun, int arg) { return fun(arg); }
 
-template<typename Fun, typename ... Args>
-auto call(Fun && f, Args&& ... args) { // Самый общий
+template <typename Fun, typename... Args>
+auto call(Fun &&f, Args &&...args) { // Самый общий
     return f(std::forward<Args>(args)...);
 }
 
-template<typename Fun, typename Arg>
-auto call(Fun f, Arg arg) {
+template <typename Fun, typename Arg> auto call(Fun f, Arg arg) {
     return f(arg);
 }
 
@@ -70,28 +67,32 @@ int main(int argc, char *argv[]) {
     // sum(a); // ОШИБКА!!!!
     {
         std::string s = "Hello!\n";
-        std::ofstream f("123.bin", std::ios_base::binary | std::ios_base::trunc);
+        std::ofstream f("123.bin",
+                        std::ios_base::binary | std::ios_base::trunc);
         f << s;
     } // Здесь f закрывается
-
-    std::string filename = "123.bin";
-    unique_file f_uniq{fopen(filename.c_str(), "r")};
-    // unique_file f_uniq{my_open(filename.c_str())};
-    if (f_uniq) {
-        auto *f = f_uniq.get(); // Если не хотим каждый раз писать get()
-        std::string result;
-        while (result.empty() || result.back() != '\n') {
-            std::array<char, 4> buf;
-            char *res = fgets(buf.data(), buf.size(), f);
-            if (res != nullptr) result += res;
-            else break;
+    {
+        std::string filename = "123.bin";
+        unique_file f_uniq{fopen(filename.c_str(), "r")};
+        // unique_file f_uniq{my_open(filename.c_str())};
+        if (f_uniq) {
+            auto *f = f_uniq.get(); // Если не хотим каждый раз писать get()
+            std::string result;
+            while (result.empty() || result.back() != '\n') {
+                std::array<char, 4> buf;
+                char *res = fgets(buf.data(), buf.size(), f);
+                if (res != nullptr)
+                    result += res;
+                else
+                    break;
+            }
+            std::cout << result;
+        } else {
+            if (errno == ENOENT)
+                std::cerr << "File does not exist\n";
+            else
+                perror("While opening file");
         }
-        std::cout << result;
-    } else {
-        if (errno == ENOENT)
-            std::cerr << "File does not exist\n";
-        else
-            perror("While opening file");
     }
     // fclose(f); // Если нет unique_ptr
 
@@ -100,21 +101,30 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < buf_len; ++i)
         std::cout << ptr[i] << ", ";
     std::cout << "\n";
-    auto fun = [](void* arg) {
-        int *val = static_cast<int*>(arg);
-        return *val;
+
+    std::cout << call_c([](int a){return a*a;}, 2) << "\n";
+
+    auto fun = [](void *arg) {
+        int *val = static_cast<int *>(arg);
+        return *val* *val;
     };
     int a = -3;
     std::cout << call_void(fun, &a) << std::endl;
+
     auto fun2 = [](void *arg) {
         float *val = static_cast<float *>(arg);
         return static_cast<int>(std::lround(*val));
     };
-    float b = -3;
+    float b = -3.2f;
     std::cout << call_void(fun2, &b) << std::endl;
+
     std::cout << call([b] { return int(std::lround(b)); }) << std::endl;
+
     auto fun3 = std::lroundf;
-    std::cout << call(std::bind(fun3, b)) << std::endl;
+    auto fun3bind = std::bind(fun3, b);
+    std::cout << call(fun3bind) << std::endl;
+
+    memory_mgmt();
 
     return 0;
 }
