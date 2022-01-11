@@ -1,11 +1,12 @@
 ---
-Checks: 'bugprone-*,clang-analyzer-cplusplus.InnerPointer,cppcoreguidelines-*
-    ,readability-*,clang-analyzer-core-*,clang-analyzer-cplusplus-*
-    ,clang-analyzer-deadcode-*,clang-analyzer-nullability-*
-    ,-modernize-use-trailing-return-type,
-    ,-hicpp-braces-around-statements,
-    ,-readability-braces-around-statements,
-    ,-misc-non-private-member-variables-in-classes'
+Checks: >
+    bugprone-*,clang-analyzer-cplusplus.InnerPointer,cppcoreguidelines-*,
+    readability-*,clang-analyzer-core-*,clang-analyzer-cplusplus-*,
+    clang-analyzer-deadcode-*,clang-analyzer-nullability-*,
+    -modernize-use-trailing-return-type,
+    -hicpp-braces-around-statements,
+    -readability-braces-around-statements,
+    -misc-non-private-member-variables-in-classes
 HeaderFilterRegex: ''
 FormatStyle:     file
 
