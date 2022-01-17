@@ -6,7 +6,8 @@ Checks: >
     -modernize-use-trailing-return-type,
     -hicpp-braces-around-statements,
     -readability-braces-around-statements,
-    -misc-non-private-member-variables-in-classes
+    -misc-non-private-member-variables-in-classes,
+    -cppcoreguidelines-avoid-magic-numbers
 HeaderFilterRegex: ''
 FormatStyle:     file
 
